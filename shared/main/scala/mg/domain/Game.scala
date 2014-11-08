@@ -13,6 +13,8 @@ trait Api {
 
   def reveal(game: Game, playerId: Int, card: Card): Game
 
+  def concede(game: Game, playerId: Int): Game
+
   def waitOnUpdate(game: Game): Future[Game]
 }
 
@@ -62,6 +64,17 @@ case class Game(id: Int,
         turn =
           turn + 1
       )
+  }
+
+  def concede(concedingPlayerId: Int) = {
+    if (winnerId.isDefined)
+      this
+    else
+      copy(winnerId = Some(opponent(concedingPlayerId).id))
+  }
+
+  def opponent(playerId: Int): Player = {
+    players.filterKeys(_ != playerId).head._2
   }
 
   def currentPlayerName = players(currentPlayerId).name
