@@ -48,22 +48,23 @@ case class Game(id: Int,
       else
         matched
     val scoreIncr = if (isMatch) 1 else 0
-    val gameWon = nextMatched.size == cards.size
-    if (gameWon)
-      copy(winnerId = Some(currentPlayerId))
-    else
-      copy(
-        currentPlayerId =
-          players.filterKeys(_ != currentPlayerId).head._1,
-        players =
-          players.adjust(currentPlayerId)(p => p.copy(score = p.score + scoreIncr)),
-        matched =
-          nextMatched,
-        revealed =
-          Seq.empty,
-        turn =
-          turn + 1
-      )
+    val gameEnded = nextMatched.size == cards.size
+    copy(
+      currentPlayerId =
+        players.filterKeys(_ != currentPlayerId).head._1,
+      players =
+        players.adjust(currentPlayerId)(p => p.copy(score = p.score + scoreIncr)),
+      matched =
+        nextMatched,
+      revealed =
+        Seq.empty,
+      turn =
+        turn + 1,
+      winnerId = if (gameEnded)
+          Some(players.values.maxBy(_.score).id)
+        else
+          None
+    )
   }
 
   def concede(concedingPlayerId: Int) = {
