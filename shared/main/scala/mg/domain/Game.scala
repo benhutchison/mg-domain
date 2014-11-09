@@ -48,7 +48,7 @@ case class Game(id: Int,
       else
         matched
     val scoreIncr = if (isMatch) 1 else 0
-    val gameWon = matched.size == cards.size
+    val gameWon = nextMatched.size == cards.size
     if (gameWon)
       copy(winnerId = Some(currentPlayerId))
     else
